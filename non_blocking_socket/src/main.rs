@@ -3,7 +3,7 @@ use std::net::SocketAddr;
 use miette::IntoDiagnostic;
 use r3bl_terminal_async::port_availability;
 
-use tokio::{stream, task::AbortHandle};
+use tokio::task::AbortHandle;
 use tokio_uring::{
     buf::BoundedBuf,
     net::{TcpListener, TcpStream},
@@ -46,21 +46,21 @@ async fn start_server(cancellation_token: CancellationToken) -> miette::Result<(
     }
 
     Ok(())
-
-    // loop {
-    //     let (socket, _) = listener.accept().await?;
-    //     tokio::spawn(process_socket(socket));
-    // }
 }
 
-// #[tokio::main]
 fn main() -> miette::Result<()> {
     dotenv::dotenv().ok();
     register_tracing_subscriber();
 
-    let cancelation_token = tokio_util::sync::CancellationToken::new();
+    let cancellation_token = tokio_util::sync::CancellationToken::new();
+    let cancellation_token_clone = cancellation_token.clone();
 
-    tokio_uring::start(start_server(cancelation_token.clone()));
+    ctrlc::set_handler(move || {
+        cancellation_token_clone.cancel();
+    })
+    .into_diagnostic()?;
+
+    tokio_uring::start(start_server(cancellation_token.clone()))?;
 
     Ok(())
 }
