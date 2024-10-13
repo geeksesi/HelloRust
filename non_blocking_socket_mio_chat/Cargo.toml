@@ -1,0 +1,21 @@
+[package]
+name = "non_blocking_socket_mio_chat"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1", features = ["full", "tracing"] }
+dotenv = "0.15.0"
+tokio-uring = { version = "0.5.0" }
+tokio-util = "0.7"
+tracing= "0.1.40"
+tracing-subscriber = "0.3.18"
+ctrlc = "3.4.4"
+miette = { version = "7.2.0", features = ["fancy"] }
+
+crossterm = { version = "0.28.1", features = ["event-stream"] }
+
+r3bl_terminal_async = { version = "0.5.3" }
+
